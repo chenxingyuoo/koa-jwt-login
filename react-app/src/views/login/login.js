@@ -13,9 +13,9 @@ class NormalLoginForm extends React.Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
-        login(values).then((res) => {
-          setToken(res.data)
+        console.log('Received values of form: ', values)
+        login(values).then((data) => {
+          setToken(data)
           fetchUserInfo().then(() => {
             this.props.history.push('/user/list')
           })

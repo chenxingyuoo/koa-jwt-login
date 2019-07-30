@@ -6,8 +6,8 @@ const User = db.define('user', {
       type: Sequelize.BIGINT,
       primaryKey: true
   },
-  username: Sequelize.STRING(100),
-  password: Sequelize.STRING(100)
+  username: Sequelize.CHAR(100),
+  password: Sequelize.CHAR(100)
 }, {
   tableName: 'users',
   timestamps: false

@@ -69,4 +69,12 @@ $ yarn dev
 ```
 
 ### 资料
-[Sequelize](https://itbilu.com/nodejs/npm/VkYIaRPz-.html#induction) [Redis](https://www.npmjs.com/package/redis)
+[Koa](https://koa.bootcss.com/)
+
+[Bcrypt](https://www.npmjs.com/package/bcrypt) hash加密
+
+[Redis](http://www.redis.cn/)
+
+[Redis package](https://www.npmjs.com/package/redis) Redis npm包
+
+[Sequelize](https://itbilu.com/nodejs/npm/VkYIaRPz-.html#induction) Node.js MySQL ORM

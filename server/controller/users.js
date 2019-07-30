@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
-const validator = require('validator');
+const bcrypt = require('bcrypt')
+const validator = require('validator')
 const {client} = require('../db/redis')
 const config = require('../config')
 const { success, error } = require('../lib/utils/response')
@@ -7,7 +8,9 @@ const { success, error } = require('../lib/utils/response')
 const User = require('../model/users')
 
 const Sequelize = require('sequelize')
-const Op = Sequelize.Op;
+const Op = Sequelize.Op
+
+const saltRounds = 10
 
 /**
  * 获取列表
@@ -72,8 +75,7 @@ exports.deleteUser = async (ctx, next) => {
  */
 const register = async (ctx, next) => {
   const body = ctx.request.body
-  const username = body.username
-  const password = body.password
+  let { username, password } = body
 
   const user = await User.findOne({
     where: {
@@ -87,6 +89,14 @@ const register = async (ctx, next) => {
     })
     return
   }
+
+  debugger
+  await bcrypt.hash(password, saltRounds).then(function(hash) {
+    debugger
+    password = hash
+      // Store hash in your password DB.
+  })
+  debugger
 
   await User.create({
     username: username,
@@ -102,9 +112,7 @@ const register = async (ctx, next) => {
  */
 exports.saveUser = async (ctx, next) => {
   const body = ctx.request.body
-  const id = body.id
-  const username = body.username
-  const password = body.password
+  const { id, username, password } = body
   if (!id) {
     await register(ctx, next)
     return
@@ -133,8 +141,8 @@ exports.register = register
  */
 exports.login = async (ctx, next) => {
   const body = ctx.request.body
-  const username = body.username
-  const password = body.password
+  const { username, password } = body
+
   if (validator.isEmpty(username) || validator.isEmpty(password)) {
     ctx.body = error({
       message: '参数错误'
@@ -156,16 +164,30 @@ exports.login = async (ctx, next) => {
       return
     }
 
+
     user = await User.findOne({
       where: {
-        username: username,
-        password: password
+        username: username
       }
     })
 
     if (!user) {
       ctx.body = error({
-        message: '账户或密码错误'
+        message: '不存在该用户'
+      })
+      return
+    }
+
+    let isequal
+    await bcrypt.compare(password, user.password).then(function(res) {
+      // res == true
+      isequal = res === true
+    })
+    debugger
+
+    if (!isequal) {
+      ctx.body = error({
+        message: '密码错误'
       })
       return
     }
@@ -177,7 +199,6 @@ exports.login = async (ctx, next) => {
       expiresIn: 60 * 60   // 1小时过期
     })
 
-    debugger
     client.set(token, user, 60*60)
     client.set(`user_${user.id}`, token, 60*60)
 
