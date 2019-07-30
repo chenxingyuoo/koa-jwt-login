@@ -17,10 +17,12 @@ exports.error = (opts = {}) => {
   }
 }
 
-exports.tokenMalformed = () => {
+exports.tokenMalformed = (opts = {}) => {
+  const {data , message } = opts
   return {
     code: 1000,
-    data: null,
-    message: 'token 异常'
+    data: data || null,
+    message: message || 'token 异常'
   }
 }
+

@@ -28,14 +28,23 @@ service.interceptors.request.use(function (config) {
 service.interceptors.response.use(function (response) {
   // Do something with response data
   if (response.status >= 200 && response.status <= 300) {
-    if (response.data.code === successCode) {
-      return response.data
+    const { data, data: {code} } = response
+    if (code === successCode) {
+      return data.data
     }
 
-    if (response.data.code === failCode) {
-      message.warning(response.data.message)
-      return Promise.reject(response)
+    if (code === failCode) {
+      message.warning(data.message)
+      return Promise.reject(data)
     }
+
+    if (code === notAuthCode) {
+      message.warning(data.message)
+      window.location.hash = '#/login'
+      return Promise.reject(data)
+    }
+
+    return Promise.reject(data)
   }
 }, function (error) {
   // 验证登录

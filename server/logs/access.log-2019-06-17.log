@@ -1,0 +1,2 @@
+[2019-06-17T14:46:22.488] [Level { level: 20000, levelStr: 'INFO', colour: 'green' }] access - ::1 - - "GET / HTTP/1.1" 200 185 "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.90 Safari/537.36"
+[2019-06-17T14:46:22.770] [Level { level: 20000, levelStr: 'INFO', colour: 'green' }] access - ::1 - - "GET /favicon.ico HTTP/1.1" 404 - "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.90 Safari/537.36"

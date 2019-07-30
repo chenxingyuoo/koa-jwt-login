@@ -5,8 +5,16 @@ import Router from './router/';
 
 
 class App extends Component {
+  state = {
+    userInfo: null
+  }
+
   componentDidMount() {
-    fetchUserInfo()
+    fetchUserInfo().then((data) => {
+      this.setState({
+        userInfo: data
+      })
+    })
   }
   render() {
     return (<Router />)

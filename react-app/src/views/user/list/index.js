@@ -34,15 +34,15 @@ class UserForm extends Component {
 function mapPropsToFields(props) {
   return {
     username: Form.createFormField({
-      value: props.selectUser ? props.selectUser.username : '',
+      value: props.selectUser ? props.selectUser.username : ''
     }),
     password: Form.createFormField({
-      value: props.selectUser ? props.selectUser.password : '',
+      value: props.selectUser ? props.selectUser.password : ''
     })
   }
 }
 
-const UserFormComponent = Form.create({mapPropsToFields})(UserForm);
+const UserFormComponent = Form.create({mapPropsToFields})(UserForm)
 
 
 class UserFormModal extends Component {
@@ -51,12 +51,12 @@ class UserFormModal extends Component {
 
     this.state = {
       visible: false,
-      confirmLoading: false,
+      confirmLoading: false
     };
   }
   showModal() {
     this.setState({
-      visible: true,
+      visible: true
     });
   }
 
@@ -78,7 +78,7 @@ class UserFormModal extends Component {
 
           self.setState({
             visible: false,
-            confirmLoading: false,
+            confirmLoading: false
           });
 
           self.props.getUserList()
@@ -98,7 +98,7 @@ class UserFormModal extends Component {
   handleCancel() {
     console.log('Clicked cancel button');
     this.setState({
-      visible: false,
+      visible: false
     });
   }
 
@@ -167,7 +167,7 @@ class UserList extends Component {
               <a onClick={this.showModal.bind(this, record, index)}>update</a>
             </span>
         )
-      },
+      }
     }];
     return (
         <SidebarLayout>
@@ -197,9 +197,9 @@ class UserList extends Component {
   }
 
   getList() {
-    fetchUserList(this.state.params).then((res) => {
+    fetchUserList(this.state.params).then((data) => {
       this.setState({
-        data: res.data
+        data: data
       })
     })
   }
@@ -226,8 +226,8 @@ class UserList extends Component {
         })
       },
       onCancel() {
-        console.log('Cancel');
-      },
+        console.log('Cancel')
+      }
     });
 
   }

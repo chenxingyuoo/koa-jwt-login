@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const validator = require('validator');
-const client = require('../db/redis')
+const {client} = require('../db/redis')
 const config = require('../config')
 const { success, error } = require('../lib/utils/response')
 
@@ -8,18 +8,6 @@ const User = require('../model/users')
 
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op;
-
-// 从redis获取用户信息
-const getUserByRedis = async (token) => {
-  return await new Promise((resolve, reject) => {
-    client.get(token, (err, value) => {
-      if (value) {
-        value = JSON.parse(value)
-      }
-      resolve(value)
-    })
-  })
-}
 
 /**
  * 获取列表
@@ -56,7 +44,7 @@ exports.getList = async (ctx, next) => {
 exports.getUserInfo = async (ctx, next) => {
   const token = ctx.request.header.token
 
-  const user = await getUserByRedis(token)
+  const user = await client.get(token)
   
   ctx.body = success({
     data: user
@@ -147,7 +135,6 @@ exports.login = async (ctx, next) => {
   const body = ctx.request.body
   const username = body.username
   const password = body.password
-
   if (validator.isEmpty(username) || validator.isEmpty(password)) {
     ctx.body = error({
       message: '参数错误'
@@ -178,26 +165,50 @@ exports.login = async (ctx, next) => {
 
     if (!user) {
       ctx.body = error({
-        message: '密码错误'
+        message: '账户或密码错误'
       })
       return
     }
     
     const token = jwt.sign({
-      userId: user.id
+      id: user.id,
+      username: user.username
     }, config.secret, {
       expiresIn: 60 * 60   // 1小时过期
-    });
+    })
 
-    client.set(token, JSON.stringify(user))
-    client.expire(token,60 * 60);
+    debugger
+    client.set(token, user, 60*60)
+    client.set(`user_${user.id}`, token, 60*60)
+
   
     ctx.body = success({
       data: token
     })
   } catch (e) {
     ctx.body = error({
-      message: e
+      message: e.message
+    })
+  }
+}
+
+/**
+ * 退出登录
+ */
+exports.logout = async (ctx, next) => {
+  const token = ctx.request.header.token
+  try {
+    const user = client.get(token)
+    jwt.sign(user, config.secret, {
+      expiresIn: 0  // 马上过期
+    })
+
+    client.remove(token)
+
+    ctx.body = success()
+  } catch (e) {
+    ctx.body = error({
+      message: e.message
     })
   }
 }
