@@ -12,6 +12,9 @@ module.exports = async (ctx, next) => {
   }
 
   try {
+    const result = await jwt.verify(token, config.secret)
+    console.log('result', result)
+
     const user = await client.get(token)
     const userToken = await client.get(`user_${user.id}`)
 
@@ -22,8 +25,6 @@ module.exports = async (ctx, next) => {
       })
       return
     }
-    const result = await jwt.verify(token, config.secret)
-    console.log('result', result)
   } catch (e) {
     ctx.status = 401
     return
