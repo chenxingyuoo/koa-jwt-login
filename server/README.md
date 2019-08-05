@@ -68,13 +68,18 @@ $ yarn dev
     |-- README.md
 ```
 
+### 总结
+1. 注册登录使用bcrypt做hash密码加密
+2. 使用jsonwebtoken生成token，用redis缓存token
+3. 封装auth中间件验证token
+
 ### 资料
-[Koa](https://koa.bootcss.com/)
+[koa](https://koa.bootcss.com/)
 
-[Bcrypt](https://www.npmjs.com/package/bcrypt) hash加密
+[jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
 
-[Redis](http://www.redis.cn/)
+[bcrypt](https://www.npmjs.com/package/bcrypt) hash加密
 
-[Redis package](https://www.npmjs.com/package/redis) Redis npm包
+[redis](https://www.npmjs.com/package/redis)
 
-[Sequelize](https://itbilu.com/nodejs/npm/VkYIaRPz-.html#induction) Node.js MySQL ORM
+[sequelize](https://itbilu.com/nodejs/npm/VkYIaRPz-.html#induction) Node.js MySQL ORM
