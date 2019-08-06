@@ -1,12 +1,12 @@
 
 import React from 'react'
-import { Layout, Menu, Icon } from 'antd';
-import {NavLink} from 'react-router-dom';
-
+import { Layout, Menu, Icon, Button } from 'antd'
+import { NavLink } from 'react-router-dom'
+import { logout } from '../../api/user'
+import { removeToken } from '../../js/utils/auth'
 import './sidebarLayout.css'
 
 const { Header, Sider, Content } = Layout;
-
 
 class Sidebar extends React.Component {
   state = {
@@ -15,8 +15,15 @@ class Sidebar extends React.Component {
 
   toggle = () => {
     this.setState({
-      collapsed: !this.state.collapsed,
-    });
+      collapsed: !this.state.collapsed
+    })
+  }
+
+  logout = () => {
+    logout().then(() => {
+      window.location.hash = '#/login'
+      removeToken()
+    })
   }
 
   render() {
@@ -52,6 +59,7 @@ class Sidebar extends React.Component {
                   type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
                   onClick={this.toggle}
               />
+              <Button onClick={this.logout}>退出登录</Button>
             </Header>
             <Content style={{
               margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280,

@@ -1,15 +1,13 @@
-const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const Sequelize = require('sequelize')
 const validator = require('validator')
 const {client} = require('../db/redis')
 const config = require('../config')
+const jwt = require('../lib/jwt')
 const { success, error } = require('../lib/utils/response')
-
 const User = require('../model/users')
 
-const Sequelize = require('sequelize')
 const Op = Sequelize.Op
-
 const saltRounds = 10
 
 /**
@@ -28,6 +26,9 @@ exports.getList = async (ctx, next) => {
       [Op.like]: '%' + keyword + '%'
     }
   }
+
+  // const allUsers = await User.findAll()
+
   const users = await User.findAll({
     where: where,
     offset: offset,
@@ -90,13 +91,9 @@ const register = async (ctx, next) => {
     return
   }
 
-  debugger
-  await bcrypt.hash(password, saltRounds).then(function(hash) {
-    debugger
+  await bcrypt.hash(password, saltRounds).then((hash) => {
     password = hash
-      // Store hash in your password DB.
   })
-  debugger
 
   await User.create({
     username: username,
@@ -180,10 +177,8 @@ exports.login = async (ctx, next) => {
 
     let isequal
     await bcrypt.compare(password, user.password).then(function(res) {
-      // res == true
       isequal = res === true
     })
-    debugger
 
     if (!isequal) {
       ctx.body = error({
@@ -191,18 +186,17 @@ exports.login = async (ctx, next) => {
       })
       return
     }
-    
+
+    // 获取token
     const token = jwt.sign({
       id: user.id,
       username: user.username
-    }, config.secret, {
-      expiresIn: 60 * 60   // 1小时过期
     })
 
-    client.set(token, user, 60*60)
-    client.set(`user_${user.id}`, token, 60*60)
+    // 缓存token
+    client.set(token, user, config.tokenExpiresTime)
+    client.set(`user_${user.id}`, token, config.tokenExpiresTime)
 
-  
     ctx.body = success({
       data: token
     })
@@ -219,12 +213,17 @@ exports.login = async (ctx, next) => {
 exports.logout = async (ctx, next) => {
   const token = ctx.request.header.token
   try {
-    const user = client.get(token)
-    jwt.sign(user, config.secret, {
-      expiresIn: 0  // 马上过期
+    const user = await client.get(token)
+
+    // 设置token过期
+    jwt.signout({
+      id: user.id,
+      username: user.username
     })
 
+    // 删除缓存
     client.remove(token)
+    client.remove(`user_${user.id}`)
 
     ctx.body = success()
   } catch (e) {

@@ -3,7 +3,8 @@ const os = require('os');
 // console.log('os.networkInterfaces()', os.networkInterfaces());
 
 module.exports = {
-  secret: 'i am secret key',
+  tokenExpiresTime: 60 * 60, // token过期时间
+  secret: 'i am secret key', // 密钥key
   security: {
     csrf: {
       ignore: ctx => {

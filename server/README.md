@@ -3,6 +3,10 @@
 ### JSON Web Token
 [JSON Web Token](http://www.ruanyifeng.com/blog/2018/07/json_web_token-tutorial.html)（缩写 JWT）是目前最流行的跨域认证解决方案 
 
+### 环境
+* node >= v7.6.0
+* mysql 5.6
+
 ### 开始
 With npm
 ```
@@ -72,6 +76,9 @@ $ yarn dev
 1. 注册登录使用bcrypt做hash密码加密
 2. 使用jsonwebtoken生成token，用redis缓存token
 3. 封装auth中间件验证token
+
+### 需要完善的地方
+1. 用户一直有操作的时候，更新token过期时间，保证用户操作过程中token不会过期
 
 ### 资料
 [koa](https://koa.bootcss.com/)

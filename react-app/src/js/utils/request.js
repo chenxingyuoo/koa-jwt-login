@@ -65,12 +65,13 @@ service.interceptors.response.use(function (response) {
  * @param {object} opts 请求参数对象
  * @returns {Promise<AxiosResponse<any>>}
  */
-service.get = (opts) => {
-  return service({
-    url: opts.url,
+service.get = (opts = {}) => {
+  opts = Object.assign({
     method: 'GET',
-    params: opts.data
-  })
+  }, opts)
+  opts.params = opts.data
+  delete opts.data
+  return service(opts)
 }
 
 /**
@@ -78,15 +79,14 @@ service.get = (opts) => {
  * @param {object} opts 请求参数对象
  * @returns {Promise<AxiosResponse<any>>}
  */
-service.post = (opts) => {
-  return service({
-    url: opts.url,
+service.post = (opts = {}) => {
+  opts = Object.assign({
     method: 'POST',
-    data: opts.data,
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     }
-  })
+  }, opts)
+  return service(opts)
 }
 
 export default service

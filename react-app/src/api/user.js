@@ -9,6 +9,13 @@ export const login = (data = {}) => {
   })
 }
 
+export const logout = (data = {}) => {
+  return request.post({
+    url: '/user/logout',
+    data: data
+  })
+}
+
 export const registered = (data = {}) => {
   return request.post({
     url: '/user/register',
